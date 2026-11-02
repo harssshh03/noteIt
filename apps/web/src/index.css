@@ -1,0 +1,196 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ───────────── Colours ─────────────
+   Everything is a variable, so changing the look = changing this block.
+   desk = the table behind the paper · paper = the page · ink = text */
+:root {
+  --radius: 0.75rem;
+
+  --desk: #e9dfc6;
+  --paper: #fbf6e9;
+  --paper-2: #f4ecd6;       /* slightly darker paper (cards, hover) */
+  --ink: #26283a;
+  --ink-soft: #5d5f73;
+  --rule: #cfd9e6;          /* ruled lines */
+  --margin: #e39a90;        /* red margin line */
+  --marigold: #f2c14e;      /* highlighter / sticky note */
+  --rose: #d9685a;
+  --sage: #8fae93;
+  --sky: #86a6d6;
+  --edge: #d9ccab;          /* borders */
+
+  --background: var(--desk);
+  --foreground: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --secondary: var(--paper-2);
+  --secondary-foreground: var(--ink);
+  --muted: var(--paper-2);
+  --muted-foreground: var(--ink-soft);
+  --accent: var(--marigold);
+  --accent-foreground: var(--ink);
+  --destructive: #c4483a;
+  --border: var(--edge);
+  --input: var(--edge);
+  --ring: var(--rose);
+}
+
+.dark {
+  --desk: #1c1a17;
+  --paper: #2a2723;
+  --paper-2: #332f2a;
+  --ink: #efe6d0;
+  --ink-soft: #a89f8c;
+  --rule: #3d4553;
+  --margin: #a4584f;
+  --marigold: #e5b445;
+  --rose: #e0796b;
+  --sage: #7f9d83;
+  --sky: #7897c4;
+  --edge: #46403a;
+  --primary: var(--marigold);
+  --primary-foreground: #1c1a17;
+  --accent: var(--marigold);
+  --accent-foreground: #1c1a17;
+  --destructive: #e0796b;
+}
+
+@theme inline {
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces Variable", Georgia, serif;
+  --font-hand: "Caveat Variable", "Kalam", "Segoe Print", cursive;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-desk: var(--desk);
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-marigold: var(--marigold);
+  --color-rose: var(--rose);
+  --color-sage: var(--sage);
+  --color-sky: var(--sky);
+  --color-edge: var(--edge);
+  --color-margin: var(--margin);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  html { scroll-behavior: smooth; }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    background-image: var(--grain);
+    min-height: 100dvh;
+  }
+  ::selection { background: color-mix(in oklab, var(--marigold) 60%, transparent); }
+  h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.015em; }
+}
+
+/* ───────────── Paper ─────────────
+   <div class="paper" data-paper="ruled|plain|grid|dots">
+   Writing surfaces add `.lined` so text sits exactly on the lines. */
+:root {
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .35  0 0 0 0 .28  0 0 0 0 .15  0 0 0 .10 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --line: 2.25rem;          /* height of one ruled line */
+  --gutter: 3.5rem;         /* space left of the red margin line */
+}
+.dark { --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 .9  0 0 0 0 .7  0 0 0 .045 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+
+.paper {
+  background-color: var(--paper);
+  background-image: var(--grain);
+  border: 1px solid var(--edge);
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 0 var(--edge), 0 12px 24px -12px rgb(60 40 10 / 0.25);
+}
+.dark .paper { box-shadow: 0 1px 0 #000 inset, 0 14px 28px -14px rgb(0 0 0 / 0.6); }
+
+.paper.lined { background-attachment: local; }
+.paper.lined[data-paper="ruled"] {
+  background-image:
+    linear-gradient(90deg, transparent var(--gutter), var(--margin) var(--gutter), var(--margin) calc(var(--gutter) + 1.5px), transparent calc(var(--gutter) + 1.5px)),
+    linear-gradient(to bottom, transparent calc(var(--line) - 1px), var(--rule) calc(var(--line) - 1px)),
+    var(--grain);
+  background-size: 100% 100%, 100% var(--line), 180px 180px;
+}
+.paper.lined[data-paper="grid"] {
+  background-image:
+    linear-gradient(var(--rule) 1px, transparent 1px),
+    linear-gradient(90deg, var(--rule) 1px, transparent 1px),
+    var(--grain);
+  background-size: var(--line) var(--line), var(--line) var(--line), 180px 180px;
+}
+.paper.lined[data-paper="dots"] {
+  background-image:
+    radial-gradient(circle, color-mix(in oklab, var(--ink) 35%, transparent) 1.2px, transparent 1.6px),
+    var(--grain);
+  background-size: var(--line) var(--line), 180px 180px;
+  background-position: calc(var(--line) / 2) calc(var(--line) / 2), 0 0;
+}
+/* plain = just the grain */
+
+/* The text that goes on the paper. Line-height matches --line so it lands on the rules. */
+.writing {
+  font-family: var(--font-hand);
+  font-size: 1.7rem;
+  line-height: var(--line);
+  color: var(--ink);
+  padding: 0 1.25rem 0 calc(var(--gutter) + 1rem);
+}
+.writing.typed { font-family: var(--font-display); font-size: 1.05rem; font-variation-settings: "opsz" 14; }
+[data-paper="grid"] .writing, [data-paper="dots"] .writing, [data-paper="plain"] .writing { padding-left: 1.5rem; }
+@media (max-width: 640px) {
+  :root { --gutter: 2.5rem; --line: 2rem; }
+  .writing { font-size: 1.5rem; }
+}
+
+/* ───────────── Little extras ───────────── */
+.tape {
+  position: absolute; width: 5.5rem; height: 1.6rem; top: -0.8rem; left: 50%;
+  translate: -50% 0; rotate: -3deg;
+  background: color-mix(in oklab, var(--marigold) 55%, transparent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / .12);
+  clip-path: polygon(2% 0, 98% 8%, 100% 92%, 0 100%);
+}
+.highlight {
+  background: linear-gradient(transparent 55%, color-mix(in oklab, var(--marigold) 70%, transparent) 55%, color-mix(in oklab, var(--marigold) 70%, transparent) 92%, transparent 92%);
+  padding: 0 .15em;
+}
+.caret::after { content: ""; display: inline-block; width: 2px; height: 1em; margin-left: 2px; background: var(--rose); vertical-align: -0.12em; animation: blink 1s steps(2) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+@keyframes ring { 0% { transform: scale(.9); opacity: .7; } 100% { transform: scale(1.8); opacity: 0; } }
+.mic-ring::before { content: ""; position: absolute; inset: 0; border-radius: 9999px; background: var(--rose); animation: ring 1.4s ease-out infinite; z-index: -1; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

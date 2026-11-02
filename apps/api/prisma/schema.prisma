@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  clerkId   String?  @unique // set once the person signs in with Clerk
+  email     String?  @unique
+  name      String?
+  handle    String?  @unique // @something — another way to be found
+  phone     String?  @unique // E.164, e.g. +919876543210 — how friends find you
+  createdAt DateTime @default(now())
+
+  notes    Post[]
+  files    Attachment[]
+  sent     Letter[] @relation("LetterSender")
+  received Letter[] @relation("LetterRecipient")
+}
+
+// A diary page. Private unless `published` (public Wall) or `shareId` (secret link).
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String   @default("")
+  content   String
+  paper     String   @default("ruled") // ruled | plain | grid | dots
+  mood      String?
+  pinned    Boolean  @default(false)
+  published Boolean  @default(false)
+  shareId   String?  @unique
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  files     Attachment[]
+
+  @@index([authorId])
+}
+
+// A note sent to another person. It's a copy, so editing the original later doesn't change it.
+model Letter {
+  id               Int       @id @default(autoincrement())
+  title            String    @default("")
+  content          String
+  paper            String    @default("ruled")
+  sender           User      @relation("LetterSender", fields: [senderId], references: [id])
+  senderId         Int
+  recipient        User      @relation("LetterRecipient", fields: [recipientId], references: [id])
+  recipientId      Int
+  readAt           DateTime?
+  recipientDeleted Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+
+  @@index([recipientId])
+  @@index([senderId])
+}
+
+// A file (photo, PDF, …) attached to a page. The bytes live in R2; this row is the label.
+model Attachment {
+  id        String   @id // random, also the R2 key
+  name      String
+  mime      String
+  size      Int
+  owner     User     @relation(fields: [ownerId], references: [id])
+  ownerId   Int
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: SetNull)
+  postId    Int?     // null until the page is saved
+  createdAt DateTime @default(now())
+
+  @@index([ownerId])
+  @@index([postId])
+}
