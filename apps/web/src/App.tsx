@@ -1,6 +1,19 @@
+
 import { useEffect } from "react";
-import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import { ClerkProvider, useAuth } from "@clerk/clerk-react";
+import {
+  BrowserRouter,
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+import {
+  ClerkProvider,
+  useAuth,
+  AuthenticateWithRedirectCallback,
+} from "@clerk/clerk-react";
 
 import { CLERK_KEY } from "@/lib/config";
 import { setTokenGetter } from "@/lib/api";
@@ -23,14 +36,34 @@ import NotFound from "@/pages/NotFound";
 function RequireAuth() {
   const { isLoaded, isSignedIn } = useAuth();
   const location = useLocation();
-  if (!isLoaded) return <p className="grid min-h-dvh place-items-center font-hand text-3xl text-ink-soft">Opening your notebook…</p>;
-  return isSignedIn ? <Outlet /> : <Navigate to="/sign-in" replace state={{ from: location.pathname }} />;
+
+  if (!isLoaded) {
+    return (
+      <p className="grid min-h-dvh place-items-center font-hand text-3xl text-ink-soft">
+        Opening your notebook…
+      </p>
+    );
+  }
+
+  return isSignedIn ? (
+    <Outlet />
+  ) : (
+    <Navigate
+      to="/sign-in"
+      replace
+      state={{ from: location.pathname }}
+    />
+  );
 }
 
 /** Gives our API helper a way to ask Clerk for a fresh token. */
 function ApiBridge() {
   const { getToken } = useAuth();
-  useEffect(() => setTokenGetter(() => getToken()), [getToken]);
+
+  useEffect(() => {
+    setTokenGetter(() => getToken());
+  }, [getToken]);
+
   return null;
 }
 
@@ -39,7 +72,10 @@ function MissingKey() {
     <main className="grid min-h-dvh place-items-center p-6 text-center">
       <div className="paper max-w-md p-6">
         <h1 className="text-2xl font-semibold">One thing missing</h1>
-        <p className="mt-2 text-ink-soft">Add <code>VITE_CLERK_PUBLISHABLE_KEY</code> to <code>frontend/.env</code> (copy <code>.env.example</code>) and restart <code>pnpm dev</code>.</p>
+        <p className="mt-2 text-ink-soft">
+          Add <code>VITE_CLERK_PUBLISHABLE_KEY</code> to your environment
+          variables and redeploy the application.
+        </p>
       </div>
     </main>
   );
@@ -47,6 +83,7 @@ function MissingKey() {
 
 function Routed() {
   const nav = useNavigate();
+
   return (
     <ClerkProvider
       publishableKey={CLERK_KEY!}
@@ -55,10 +92,19 @@ function Routed() {
       routerReplace={(to) => nav(to, { replace: true })}
     >
       <ApiBridge />
+
       <Routes>
         <Route path="/" element={<Landing />} />
+
+        {/* Clerk Google OAuth callback */}
+        <Route
+          path="/sign-in/sso-callback"
+          element={<AuthenticateWithRedirectCallback />}
+        />
+
         <Route path="/sign-in/*" element={<SignInPage />} />
         <Route path="/sign-up/*" element={<SignUpPage />} />
+
         <Route path="/s/:shareId" element={<Shared />} />
 
         <Route element={<RequireAuth />}>
@@ -81,5 +127,9 @@ function Routed() {
 }
 
 export default function App() {
-  return <BrowserRouter>{CLERK_KEY ? <Routed /> : <MissingKey />}</BrowserRouter>;
+  return (
+    <BrowserRouter>
+      {CLERK_KEY ? <Routed /> : <MissingKey />}
+    </BrowserRouter>
+  );
 }

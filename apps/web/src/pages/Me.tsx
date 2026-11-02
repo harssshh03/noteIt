@@ -53,7 +53,7 @@ export default function Me() {
           <Label htmlFor="handle">Handle</Label>
           <div className="relative">
             <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft">@</span>
-            <Input id="handle" value={handle} onChange={(e) => setHandle(e.target.value.toLowerCase())} className="bg-paper pl-7" placeholder="aarav_writes" maxLength={20} />
+            <Input id="handle" value={handle} onChange={(e) => setHandle(e.target.value.toLowerCase())} className="bg-paper pl-7" placeholder="harsh_writes" maxLength={20} />
           </div>
           <p className="text-xs text-ink-soft">Letters, numbers and _ · 3–20 characters</p>
         </div>

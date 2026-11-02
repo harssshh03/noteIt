@@ -141,7 +141,7 @@ export function SendSheet({
               <label className="text-sm font-medium" htmlFor="to">
                 {tab === "noteit" ? "Their phone number or @handle" : "Their phone number (optional)"}
               </label>
-              <Input id="to" value={to} onChange={(e) => setTo(e.target.value)} inputMode={isHandle ? "text" : "tel"} placeholder={tab === "noteit" ? "98765 43210 or @aarav" : "98765 43210"} className="bg-paper" />
+              <Input id="to" value={to} onChange={(e) => setTo(e.target.value)} inputMode={isHandle ? "text" : "tel"} placeholder={tab === "noteit" ? "98765 43210 or @harsh" : "98765 43210"} className="bg-paper" />
             </div>
           )}
 
